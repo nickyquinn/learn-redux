@@ -40,18 +40,19 @@ Characteristics of a Pure function
 
 //Reducer function
 function todos(state = [], action) {
-  if(action.type === "ADD_TODO") {
-    return state.concat([action.todo])
-  } else if(action.type === "REMOVE_TODO") {
-    return state.filter((todo)=> todo.id !== action.id)
-  } else if(action.tyoe === "TOGGLE_TODO") {
-    return state.map((todo) => todo.id !== action.id ? todo : 
+  switch(action.type) {
+    case "ADD_TODO":
+      return state.concat([action.todo])
+    case "REMOVE_TODO":
+      return state.filter((todo)=> todo.id !== action.id)
+    case "TOGGLE_TODO":
+      return state.map((todo) => todo.id !== action.id ? todo : 
       //Object.assign merges instead of creating a whole new object and
       //manually cloning it
-      Object.assign({}, todo, {complete: !todo.complete})
-    )
-  } else {
-    return state;
+        Object.assign({}, todo, {complete: !todo.complete})
+      )
+    default: 
+      return state
   }
 }
 
@@ -89,15 +90,4 @@ function createStore(reducer) {
 }
 
 const store = createStore(todos);
-const unsubscribe = store.subscribe(() => {});
-
-unsubscribe();
-
-store.dispatch({
-  type: 'ADD_TODO',
-  todo: {
-    id: 0,
-    name: "Learn Redux",
-    complete: false
-  }
-})
+store.subscribe(() => { console.log("The new state is: ", store.getState()) })
