@@ -141,10 +141,21 @@ Characteristics of a Pure function
         }
       }
 
+      //loading reducer
+      function loading(state = true, action) {
+        switch (action.type) {
+          case "RECEIVE_DATA":
+            return false;
+          default:
+            return true;
+        }
+      }
+
       const store = Redux.createStore(
         Redux.combineReducers({
           todos,
           goals,
+          loading,
         }),
         Redux.applyMiddleware(checker, logger)
       );
@@ -259,7 +270,12 @@ Characteristics of a Pure function
         }
         render() {
           const { store } = this.props;
-          const { todos, goals } = store.getState();
+          const { todos, goals, loading } = store.getState();
+
+          if (loading === true) {
+            return <h3>Loading</h3>;
+          }
+
           return (
             <div>
               <Todos todos={todos} store={this.props.store} />
